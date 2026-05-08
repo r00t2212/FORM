@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>FORM — Smart Workout</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+
+<!-- ════════════════════════════════════════
+     SCREEN 1 · SETUP
+════════════════════════════════════════ -->
+<div class="screen active" id="screen-setup">
+  <div class="setup-hero">
+    <div class="app-logo">FORM</div>
+    <div class="app-tagline">Smart Training · Mat Only</div>
+  </div>
+
+  <div class="setup-body">
+
+    <!-- Duration -->
+    <div class="setup-section">
+      <div class="setup-label">Training Duration</div>
+      <div class="duration-display" id="dur-display">30<span>min</span></div>
+      <div class="slider-track">
+        <div class="slider-fill" id="slider-fill" style="width:40%"></div>
+        <input type="range" id="dur-slider" min="15" max="60" step="5" value="30">
+      </div>
+      <div class="slider-labels"><span>15 min</span><span>60 min</span></div>
+    </div>
+
+    <!-- Muscle group -->
+    <div class="setup-section">
+      <div class="setup-label">Muscle Group <span style="font-size:0.6rem;color:var(--accent);margin-left:6px;letter-spacing:0.04em;text-transform:none">select one or more</span></div>
+      <div class="muscle-grid">
+        <div class="muscle-chip" data-id="abs_core">
+          <span class="chip-icon">⬡</span>
+          <div><div class="chip-name">Abs & Core</div><div class="chip-sub">Stability & definition</div></div>
+          <div class="chip-check">✓</div>
+        </div>
+        <div class="muscle-chip" data-id="chest">
+          <span class="chip-icon">◈</span>
+          <div><div class="chip-name">Chest</div><div class="chip-sub">Pecs & shoulders</div></div>
+          <div class="chip-check">✓</div>
+        </div>
+        <div class="muscle-chip" data-id="back">
+          <span class="chip-icon">◇</span>
+          <div><div class="chip-name">Back</div><div class="chip-sub">Lats & biceps</div></div>
+          <div class="chip-check">✓</div>
+        </div>
+        <div class="muscle-chip" data-id="arms">
+          <span class="chip-icon">◉</span>
+          <div><div class="chip-name">Arms</div><div class="chip-sub">Biceps & triceps</div></div>
+          <div class="chip-check">✓</div>
+        </div>
+        <div class="muscle-chip" data-id="legs">
+          <span class="chip-icon">◌</span>
+          <div><div class="chip-name">Legs</div><div class="chip-sub">Glutes, quads, knees</div></div>
+          <div class="chip-check">✓</div>
+        </div>
+        <div class="muscle-chip" data-id="full_body">
+          <span class="chip-icon">◎</span>
+          <div><div class="chip-name">Full Body</div><div class="chip-sub">All muscle groups</div></div>
+          <div class="chip-check">✓</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Injuries -->
+    <div class="setup-section">
+      <div class="setup-label">Current Injuries / Limitations</div>
+      <div class="injury-grid">
+        <button class="injury-btn" data-val="it band" type="button">
+          <span class="inj-icon">🦵</span><span class="inj-label">IT Band</span>
+        </button>
+        <button class="injury-btn" data-val="lower back" type="button">
+          <span class="inj-icon">🔻</span><span class="inj-label">Lower Back</span>
+        </button>
+        <button class="injury-btn" data-val="knee" type="button">
+          <span class="inj-icon">🦿</span><span class="inj-label">Knee</span>
+        </button>
+        <button class="injury-btn" data-val="shoulder impingement" type="button">
+          <span class="inj-icon">💪</span><span class="inj-label">Shoulder</span>
+        </button>
+        <button class="injury-btn" data-val="wrist" type="button">
+          <span class="inj-icon">🖐</span><span class="inj-label">Wrist</span>
+        </button>
+        <button class="injury-btn" data-val="elbow" type="button">
+          <span class="inj-icon">↗</span><span class="inj-label">Elbow</span>
+        </button>
+        <button class="injury-btn" data-val="neck" type="button">
+          <span class="inj-icon">𖠣</span><span class="inj-label">Neck</span>
+        </button>
+        <button class="injury-btn" data-val="hip" type="button">
+          <span class="inj-icon">🔁</span><span class="inj-label">Hip</span>
+        </button>
+        <button class="injury-btn" data-val="back" type="button">
+          <span class="inj-icon">🔙</span><span class="inj-label">Upper Back</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Generate -->
+    <button class="generate-btn" id="generate-btn">
+      <span>GENERATE WORKOUT</span>
+      <span class="btn-arrow">→</span>
+    </button>
+
+  </div>
+</div><!-- end setup -->
+
+
+<!-- ════════════════════════════════════════
+     SCREEN 2 · LOADING
+════════════════════════════════════════ -->
+<div class="screen" id="screen-loading">
+  <div class="loading-ring">
+    <svg viewBox="0 0 72 72" width="72" height="72">
+      <circle class="ring-bg" cx="36" cy="36" r="30"/>
+      <circle class="ring-spin" cx="36" cy="36" r="30"/>
+    </svg>
+  </div>
+  <div class="loading-text">Building your plan</div>
+  <div class="loading-sub" id="loading-sub">Analysing your goals and adapting exercises to your needs...</div>
+  <div class="loading-dots"><span>·</span><span>·</span><span>·</span></div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     SCREEN 3 · PLAN OVERVIEW
+════════════════════════════════════════ -->
+<div class="screen" id="screen-plan">
+  <div class="plan-header">
+    <button class="plan-back" id="plan-back-btn">← Back</button>
+    <div class="plan-title" id="plan-title">YOUR PLAN</div>
+    <div class="plan-meta" id="plan-meta"></div>
+  </div>
+  <div class="plan-notice" id="plan-notice"></div>
+  <div class="exercise-list" id="exercise-list"></div>
+  <button class="start-workout-btn" id="start-workout-btn">
+    ▶ START SESSION
+  </button>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     SCREEN 4 · ACTIVE SESSION
+════════════════════════════════════════ -->
+<div class="screen" id="screen-session">
+  <div class="session-header">
+    <button class="session-back" id="session-back-btn">←</button>
+    <div class="session-progress-wrap">
+      <div class="session-progress-label" id="sess-progress-label">EXERCISE 1 OF 1</div>
+      <div class="session-progress-bar">
+        <div class="session-progress-fill" id="sess-progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="session-exercise" id="sess-exercise-info">
+    <div class="session-ex-num" id="sess-ex-num">01</div>
+    <div class="session-ex-name" id="sess-ex-name">Exercise Name</div>
+    <div class="session-ex-tags" id="sess-ex-tags"></div>
+    <div class="session-anim-wrap" id="sess-anim"></div>
+    <div class="session-ex-desc" id="sess-ex-desc">Description</div>
+    <div class="session-ex-tip"  id="sess-ex-tip"></div>
+  </div>
+
+  <div class="session-timer-area">
+    <div class="big-ring-wrap">
+      <svg viewBox="0 0 180 180" width="180" height="180">
+        <circle class="big-ring-bg" cx="90" cy="90" r="80"/>
+        <circle class="big-ring-fg" id="big-ring-fg" cx="90" cy="90" r="80"
+          stroke="#e8380d"
+          stroke-dasharray="502.65"
+          stroke-dashoffset="0"/>
+      </svg>
+      <div class="big-ring-inner">
+        <div class="big-phase"  id="big-phase">READY</div>
+        <div class="big-time"   id="big-time">—</div>
+        <div class="big-sets-label" id="big-sets-label">SET 0 / 0</div>
+        <div class="big-side-label" id="big-side-label">LEFT</div>
+      </div>
+    </div>
+    <div class="session-sets-dots" id="sets-dots"></div>
+  </div>
+
+  <div class="session-controls">
+    <button class="ctrl-btn ctrl-skip" id="ctrl-skip">SKIP</button>
+    <button class="ctrl-btn ctrl-main" id="ctrl-main">START</button>
+  </div>
+</div><!-- end session -->
+
+<!-- Finish overlay -->
+<div id="finish-overlay">
+  <div class="finish-icon">🏆</div>
+  <div class="finish-title">DONE!</div>
+  <div class="finish-sub" id="finish-sub">Workout complete. Great work.</div>
+  <div class="finish-stats">
+    <div class="finish-stat"><div class="finish-stat-val" id="finish-exs">0</div><div class="finish-stat-label">Exercises</div></div>
+    <div class="finish-stat"><div class="finish-stat-val" id="finish-sets">0</div><div class="finish-stat-label">Sets</div></div>
+    <div class="finish-stat"><div class="finish-stat-val" id="finish-mins">0</div><div class="finish-stat-label">Minutes</div></div>
+  </div>
+  <button class="finish-btn" id="finish-btn">NEW WORKOUT</button>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+</div><!-- end app -->
+
+<script src="js/data.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/workout.js"></script>
+<script src="js/session.js"></script>
+</body>
+</html>
