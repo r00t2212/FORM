@@ -1,6 +1,27 @@
 let sessionState = { exIdx: 0, setIdx: 0, sideIdx: 0, phase: 'idle', remaining: 0, ivId: null };
 let sessionStart = null;
 
+function haptic(pattern) {
+  if (navigator.vibrate) navigator.vibrate(pattern);
+}
+
+function beep(freq = 660, dur = 0.12, vol = 0.25) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(vol, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + dur);
+    setTimeout(() => ctx.close(), (dur + 0.1) * 1000);
+  } catch(e) {}
+}
+
 /* ══════════════════════════════════════════════════
    SESSION LOGIC
    Queue: warmup[] → exercises[] → cooldown[]
@@ -24,6 +45,8 @@ document.getElementById('start-workout-btn').addEventListener('click', () => {
 });
 
 document.getElementById('session-back-btn').addEventListener('click', () => {
+  const inProgress = sessionState.exIdx > 0 || sessionState.setIdx > 0 || sessionState.phase !== 'idle';
+  if (inProgress && !confirm('Leave workout? Your progress will be lost.')) return;
   stopTimer();
   sessionState = { exIdx: 0, setIdx: 0, sideIdx: 0, phase: 'idle', remaining: 0, ivId: null };
   showScreen('screen-plan');
@@ -70,7 +93,7 @@ function loadQueueItem(idx) {
   const animEl = document.getElementById('sess-anim');
   if (qtype === 'main') {
     animEl.style.display = '';
-    animEl.innerHTML = `<img src="IMAGES/${item.name}.png" alt="${item.name}" class="sess-img" onerror="this.parentElement.style.display='none'">`;
+    animEl.innerHTML = `<img src="IMAGES/${item.name}.png" alt="${item.name}" class="sess-img" loading="lazy" onerror="this.parentElement.style.display='none'">`;
   } else {
     animEl.innerHTML = '';
     animEl.style.display = 'none';
@@ -295,6 +318,9 @@ function startRest(item) {
 }
 
 function afterRest(item) {
+  beep(880, 0.08);
+  setTimeout(() => beep(880, 0.08), 120);
+  haptic([30, 60, 30]);
   sessionState.phase = 'idle-next';
   sessionState.sideIdx = 0;
   updateSideLabel(item);
@@ -307,6 +333,7 @@ function afterRest(item) {
 
 function exDone() {
   stopTimer();
+  haptic([40, 30, 40]);
   sessionState.phase = 'done';
   document.getElementById('big-phase').textContent = 'DONE!';
   document.getElementById('big-time').textContent  = '✓';
@@ -324,6 +351,7 @@ function nextQueueItem() {
 
 function finishWorkout() {
   stopTimer();
+  haptic([80, 40, 80, 40, 120]);
   const mins = Math.round((Date.now() - sessionStart) / 60000);
   const totalSets = workout.exercises.reduce((a,e) => a + e.sets, 0);
   document.getElementById('finish-exs').textContent  = workout.exercises.length;
@@ -333,6 +361,7 @@ function finishWorkout() {
   document.getElementById('sess-progress-fill').style.width = '100%';
   document.getElementById('sess-progress-label').textContent = 'ALL DONE';
   document.getElementById('finish-overlay').classList.add('show');
+  saveWorkoutHistory({ date: Date.now(), muscle: workout.muscle, duration: Math.max(1, mins), exercises: workout.exercises.length, sets: totalSets });
 }
 
 document.getElementById('finish-btn').addEventListener('click', () => {

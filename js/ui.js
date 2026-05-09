@@ -60,3 +60,57 @@ function showToast(msg) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3500);
 }
+
+/* ══════════════════════════════════════════════════
+   WORKOUT HISTORY
+══════════════════════════════════════════════════ */
+function saveWorkoutHistory(entry) {
+  try {
+    const history = getWorkoutHistory();
+    history.unshift(entry);
+    localStorage.setItem('form_history', JSON.stringify(history.slice(0, 10)));
+    renderHistoryBar();
+  } catch(e) {}
+}
+
+function getWorkoutHistory() {
+  try { return JSON.parse(localStorage.getItem('form_history') || '[]'); }
+  catch { return []; }
+}
+
+function getStreak(history) {
+  if (!history.length) return 0;
+  const dayStart = ts => { const d = new Date(ts); d.setHours(0,0,0,0); return d.getTime(); };
+  const days = [...new Set(history.map(w => dayStart(w.date)))].sort((a,b) => b - a);
+  const todayStart = dayStart(Date.now());
+  const yesterdayStart = todayStart - 86400000;
+  if (days[0] < yesterdayStart) return 0;
+  let streak = 0, expected = days[0];
+  for (const day of days) {
+    if (day === expected) { streak++; expected -= 86400000; }
+    else break;
+  }
+  return streak;
+}
+
+function timeAgo(ts) {
+  const days = Math.floor((Date.now() - ts) / 86400000);
+  if (days === 0) return 'Today';
+  if (days === 1) return 'Yesterday';
+  return `${days}d ago`;
+}
+
+function renderHistoryBar() {
+  const bar = document.getElementById('history-bar');
+  if (!bar) return;
+  const history = getWorkoutHistory();
+  if (!history.length) { bar.innerHTML = ''; return; }
+  const streak = getStreak(history);
+  const last = history[0];
+  const streakHtml = streak > 1
+    ? `<span class="history-streak">${streak}-DAY STREAK</span><span class="history-dot"></span>`
+    : '';
+  bar.innerHTML = `${streakHtml}<span class="history-last">${timeAgo(last.date)} · ${last.muscle} · ${last.duration}min</span>`;
+}
+
+renderHistoryBar();

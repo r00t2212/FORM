@@ -33,11 +33,16 @@ function buildInjuryNote(injuryKeywords, muscle) {
   return 'Adaptations: ' + notes.join('; ') + '.';
 }
 
+function pickRandom(arr, n) {
+  return [...arr].sort(() => Math.random() - 0.5).slice(0, n);
+}
 function selectWarmup(muscle) {
-  return (WARMUP[muscle] || WARMUP.full_body).map(w => ({ ...w, type:'warmup' }));
+  const pool = WARMUP[muscle] || WARMUP.full_body;
+  return pickRandom(pool, 4).map(w => ({ ...w, type:'warmup' }));
 }
 function selectCooldown(muscle) {
-  return (COOLDOWN[muscle] || COOLDOWN.full_body).map(c => ({ ...c, type:'cooldown' }));
+  const pool = COOLDOWN[muscle] || COOLDOWN.full_body;
+  return pickRandom(pool, 4).map(c => ({ ...c, type:'cooldown' }));
 }
 
 /* ══════════════════════════════════════════════════
@@ -52,10 +57,10 @@ function selectExercises(muscles, duration, injuryKeywords) {
   const targetCount = Math.max(4, Math.min(11, Math.round(workMinutes / 4.2)));
 
   function prioritySort(arr) {
-    return [...arr].sort((a, b) => {
-      if (b.priority !== a.priority) return b.priority - a.priority;
-      return Math.random() - 0.5;
-    });
+    return arr
+      .map(ex => ({ ex, score: ex.priority + Math.random() * 4 }))
+      .sort((a, b) => b.score - a.score)
+      .map(({ ex }) => ex);
   }
 
   function pickFromPool(pool, n) {
@@ -116,9 +121,14 @@ function selectExercises(muscles, duration, injuryKeywords) {
    GENERATE (no API — built-in logic)
 ══════════════════════════════════════════════════ */
 document.getElementById('generate-btn').addEventListener('click', generateWorkout);
+document.getElementById('plan-regen-btn').addEventListener('click', generateWorkout);
+document.getElementById('plan-share-btn').addEventListener('click', shareWorkout);
 
 function generateWorkout() {
   if (!selectedMuscles.length) { showToast('Please select at least one muscle group'); return; }
+
+  const btn = document.getElementById('generate-btn');
+  btn.disabled = true;
 
   const duration   = parseInt(durSlider.value);
   const injuryKeys = getActiveInjuries();
@@ -162,7 +172,58 @@ function generateWorkout() {
 
     renderPlan();
     showScreen('screen-plan');
-  }, 900);
+    btn.disabled = false;
+  }, 300);
+}
+
+/* ══════════════════════════════════════════════════
+   SWAP & SHARE
+══════════════════════════════════════════════════ */
+function swapExercise(idx) {
+  const ex = workout.exercises[idx];
+  const usedNames = new Set(workout.exercises.map(e => e.name));
+  const injuryKeys = getActiveInjuries();
+  const candidates = LIBRARY.filter(e =>
+    e.groups.some(g => ex.groups.includes(g)) &&
+    !usedNames.has(e.name) &&
+    !injuryKeys.some(k => e.avoidIf.includes(k))
+  );
+  if (!candidates.length) { showToast('No other exercises available for this group'); return; }
+  const picked = candidates
+    .map(e => ({ e, score: e.priority + Math.random() * 4 }))
+    .sort((a, b) => b.score - a.score)[0].e;
+  const workMinutes = Math.max(10, workout.duration - 10);
+  let sets = picked.sets;
+  if (workMinutes <= 15) sets = Math.max(2, sets - 1);
+  else if (workMinutes >= 40) sets = Math.min(4, sets + 1);
+  workout.exercises[idx] = { ...picked, sets };
+  renderPlan();
+}
+
+function shareWorkout() {
+  if (!workout) return;
+  const lines = [
+    `${workout.title} — ${workout.duration}min · ${workout.muscle}`,
+    '',
+    'WARM-UP',
+    ...workout.warmup.map(w => `  ${w.name} (${w.duration}s)`),
+    '',
+    'WORKOUT',
+    ...workout.exercises.map((ex, i) => `  ${i+1}. ${ex.name} — ${ex.sets}× ${ex.label}`),
+    '',
+    'COOL-DOWN',
+    ...workout.cooldown.map(c => `  ${c.name} (${c.duration}s)`),
+    '',
+    'Built with FORM',
+  ];
+  const text = lines.join('\n');
+  if (navigator.share) {
+    navigator.share({ title: workout.title, text }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text)
+      .then(() => showToast('Workout copied to clipboard'))
+      .catch(() => showToast('Could not copy — try a modern browser'));
+  }
 }
 
 /* ══════════════════════════════════════════════════
@@ -188,6 +249,10 @@ function renderPlan() {
 
   const list = document.getElementById('exercise-list');
   list.innerHTML = '';
+  list.onclick = e => {
+    const btn = e.target.closest('.ex-swap-btn');
+    if (btn) swapExercise(parseInt(btn.dataset.idx));
+  };
 
   // ── Warmup section ──
   const wuHeader = document.createElement('div');
@@ -219,7 +284,7 @@ function renderPlan() {
     const card = document.createElement('div');
     card.className = 'ex-card';
     card.innerHTML = `
-      <div class="ex-anim-wrap"><img src="IMAGES/${ex.name}.png" alt="${ex.name}" class="ex-img" onerror="this.style.display='none'"></div>
+      <div class="ex-anim-wrap"><img src="IMAGES/${ex.name}.png" alt="${ex.name}" class="ex-img" loading="lazy" onerror="this.style.display='none'"></div>
       <div class="ex-card-body">
         <div class="ex-card-name">${ex.name}</div>
         <div class="ex-card-tags">${(ex.tags||[]).map(t => `<span class="ex-tag ${tagClass(t)}">${t}</span>`).join('')}</div>
@@ -229,6 +294,7 @@ function renderPlan() {
         <div class="ex-sets-val">${ex.sets}×</div>
         <div class="ex-sets-unit">${ex.label}</div>
         <div class="ex-sets-rest">${ex.rest_secs}s rest</div>
+        <button class="ex-swap-btn" data-idx="${i}">⇄ Swap</button>
       </div>`;
     list.appendChild(card);
   });

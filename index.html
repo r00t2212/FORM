@@ -2,8 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FORM — Smart Workout</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#e8380d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FORM">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -17,6 +22,7 @@
   <div class="setup-hero">
     <div class="app-logo">FORM</div>
     <div class="app-tagline">Smart Training · Mat Only</div>
+    <div class="history-bar" id="history-bar"></div>
   </div>
 
   <div class="setup-body">
@@ -36,36 +42,36 @@
     <div class="setup-section">
       <div class="setup-label">Muscle Group <span style="font-size:0.6rem;color:var(--accent);margin-left:6px;letter-spacing:0.04em;text-transform:none">select one or more</span></div>
       <div class="muscle-grid">
-        <div class="muscle-chip" data-id="abs_core">
+        <button class="muscle-chip" type="button" data-id="abs_core">
           <span class="chip-icon">⬡</span>
           <div><div class="chip-name">Abs & Core</div><div class="chip-sub">Stability & definition</div></div>
           <div class="chip-check">✓</div>
-        </div>
-        <div class="muscle-chip" data-id="chest">
+        </button>
+        <button class="muscle-chip" type="button" data-id="chest">
           <span class="chip-icon">◈</span>
           <div><div class="chip-name">Chest</div><div class="chip-sub">Pecs & shoulders</div></div>
           <div class="chip-check">✓</div>
-        </div>
-        <div class="muscle-chip" data-id="back">
+        </button>
+        <button class="muscle-chip" type="button" data-id="back">
           <span class="chip-icon">◇</span>
           <div><div class="chip-name">Back</div><div class="chip-sub">Lats & biceps</div></div>
           <div class="chip-check">✓</div>
-        </div>
-        <div class="muscle-chip" data-id="arms">
+        </button>
+        <button class="muscle-chip" type="button" data-id="arms">
           <span class="chip-icon">◉</span>
           <div><div class="chip-name">Arms</div><div class="chip-sub">Biceps & triceps</div></div>
           <div class="chip-check">✓</div>
-        </div>
-        <div class="muscle-chip" data-id="legs">
+        </button>
+        <button class="muscle-chip" type="button" data-id="legs">
           <span class="chip-icon">◌</span>
           <div><div class="chip-name">Legs</div><div class="chip-sub">Glutes, quads, knees</div></div>
           <div class="chip-check">✓</div>
-        </div>
-        <div class="muscle-chip" data-id="full_body">
+        </button>
+        <button class="muscle-chip" type="button" data-id="full_body">
           <span class="chip-icon">◎</span>
           <div><div class="chip-name">Full Body</div><div class="chip-sub">All muscle groups</div></div>
           <div class="chip-check">✓</div>
-        </div>
+        </button>
       </div>
     </div>
 
@@ -134,15 +140,23 @@
 ════════════════════════════════════════ -->
 <div class="screen" id="screen-plan">
   <div class="plan-header">
-    <button class="plan-back" id="plan-back-btn">← Back</button>
+    <div class="plan-header-row">
+      <button class="plan-back" id="plan-back-btn">← Back</button>
+      <div class="plan-header-actions">
+        <button class="plan-share" id="plan-share-btn" aria-label="Share workout">↑ Share</button>
+        <button class="plan-regen" id="plan-regen-btn">↻ Shuffle</button>
+      </div>
+    </div>
     <div class="plan-title" id="plan-title">YOUR PLAN</div>
     <div class="plan-meta" id="plan-meta"></div>
+    <div class="plan-notice" id="plan-notice"></div>
   </div>
-  <div class="plan-notice" id="plan-notice"></div>
-  <div class="exercise-list" id="exercise-list"></div>
-  <button class="start-workout-btn" id="start-workout-btn">
-    ▶ START SESSION
-  </button>
+  <div class="plan-scroll-body">
+    <div class="exercise-list" id="exercise-list"></div>
+    <button class="start-workout-btn" id="start-workout-btn">
+      ▶ START SESSION
+    </button>
+  </div>
 </div>
 
 
@@ -208,7 +222,7 @@
 </div>
 
 <!-- Toast -->
-<div id="toast"></div>
+<div id="toast" role="alert" aria-live="polite"></div>
 
 </div><!-- end app -->
 
@@ -216,5 +230,10 @@
 <script src="js/ui.js"></script>
 <script src="js/workout.js"></script>
 <script src="js/session.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+</script>
 </body>
 </html>
