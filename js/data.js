@@ -175,7 +175,7 @@ const LIBRARY = [
     desc:'Hands on the edge of a stable chair, legs extended. Bend elbows to lower your body toward the floor (~90°), then push back up.',
     tip:'Keep elbows pointing straight back, not flared outward.', sets:4, work_secs:0, rest_secs:60, label:'12 REPS', priority:9 },
 
-  { name:'Close-Grip Push-Up', groups:['arms','chest'],
+  { name:'Close Grip Push-Up', groups:['arms','chest'],
     tags:['Triceps'], avoidIf:['wrist'], safeFor:[],
     desc:'Hands just inside shoulder-width, fingers angled slightly inward. Elbows track back close to the ribs. Taxes the long head of the tricep.',
     tip:'Pair this with diamond push-ups as a superset.', sets:3, work_secs:0, rest_secs:60, label:'15 REPS', priority:8 },
