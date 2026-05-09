@@ -257,7 +257,7 @@ function renderPlan() {
   // ── Warmup section ──
   const wuHeader = document.createElement('div');
   wuHeader.className = 'plan-phase-header warmup-header';
-  wuHeader.innerHTML = `<span class="phase-icon">🔥</span> WARM-UP <span class="phase-duration">~5 min</span>`;
+  wuHeader.innerHTML = `<span class="phase-icon">${ICONS.flame}</span> WARM-UP <span class="phase-duration">~5 min</span>`;
   list.appendChild(wuHeader);
   workout.warmup.forEach((item, i) => {
     const card = document.createElement('div');
@@ -278,7 +278,7 @@ function renderPlan() {
   // ── Main workout section ──
   const mainHeader = document.createElement('div');
   mainHeader.className = 'plan-phase-header main-header';
-  mainHeader.innerHTML = `<span class="phase-icon">⚡</span> WORKOUT <span class="phase-duration">${workout.exercises.length} exercises</span>`;
+  mainHeader.innerHTML = `<span class="phase-icon">${ICONS.zap}</span> WORKOUT <span class="phase-duration">${workout.exercises.length} exercises</span>`;
   list.appendChild(mainHeader);
   workout.exercises.forEach((ex, i) => {
     const card = document.createElement('div');
@@ -302,7 +302,7 @@ function renderPlan() {
   // ── Cooldown section ──
   const cdHeader = document.createElement('div');
   cdHeader.className = 'plan-phase-header cooldown-header';
-  cdHeader.innerHTML = `<span class="phase-icon">❄️</span> COOL-DOWN <span class="phase-duration">~5 min</span>`;
+  cdHeader.innerHTML = `<span class="phase-icon">${ICONS.snowflake}</span> COOL-DOWN <span class="phase-duration">~5 min</span>`;
   list.appendChild(cdHeader);
   workout.cooldown.forEach((item, i) => {
     const card = document.createElement('div');

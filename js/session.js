@@ -1,4 +1,4 @@
-let sessionState = { exIdx: 0, setIdx: 0, sideIdx: 0, phase: 'idle', remaining: 0, ivId: null };
+let sessionState = { exIdx: 0, setIdx: 0, sideIdx: 0, completedSets: 0, phase: 'idle', remaining: 0, ivId: null };
 let sessionStart = null;
 
 function haptic(pattern) {
@@ -38,7 +38,7 @@ function buildQueue() {
 
 document.getElementById('start-workout-btn').addEventListener('click', () => {
   sessionQueue = buildQueue();
-  sessionState = { exIdx: 0, setIdx: 0, sideIdx: 0, phase: 'idle', remaining: 0, ivId: null };
+  sessionState = { exIdx: 0, setIdx: 0, sideIdx: 0, completedSets: 0, phase: 'idle', remaining: 0, ivId: null };
   sessionStart = Date.now();
   loadQueueItem(0);
   showScreen('screen-session');
@@ -48,7 +48,7 @@ document.getElementById('session-back-btn').addEventListener('click', () => {
   const inProgress = sessionState.exIdx > 0 || sessionState.setIdx > 0 || sessionState.phase !== 'idle';
   if (inProgress && !confirm('Leave workout? Your progress will be lost.')) return;
   stopTimer();
-  sessionState = { exIdx: 0, setIdx: 0, sideIdx: 0, phase: 'idle', remaining: 0, ivId: null };
+  sessionState = { exIdx: 0, setIdx: 0, sideIdx: 0, completedSets: 0, phase: 'idle', remaining: 0, ivId: null };
   showScreen('screen-plan');
 });
 
@@ -78,14 +78,14 @@ function loadQueueItem(idx) {
 
   // Number / phase label
   const numLabel =
-    qtype === 'warmup'   ? '🔥' :
-    qtype === 'cooldown' ? '❄️' :
+    qtype === 'warmup'   ? ICONS.flame :
+    qtype === 'cooldown' ? ICONS.snowflake :
     String(idx - wu + 1).padStart(2,'0');
 
-  document.getElementById('sess-ex-num').textContent  = numLabel;
+  document.getElementById('sess-ex-num').innerHTML   = numLabel;
   document.getElementById('sess-ex-name').textContent = item.name;
   document.getElementById('sess-ex-desc').textContent = item.desc;
-  document.getElementById('sess-ex-tip').textContent  = item.tip ? '💡 ' + item.tip : '';
+  document.getElementById('sess-ex-tip').innerHTML   = item.tip ? `${ICONS.lightbulb}<span>${item.tip}</span>` : '';
 
   const tagsEl = document.getElementById('sess-ex-tags');
   tagsEl.innerHTML = (item.tags||[]).map(t => `<span class="ex-tag ${tagClass(t)}">${t}</span>`).join('');
@@ -285,6 +285,7 @@ function afterSet(item) {
 
   // Both sides done (or bilateral) — reset side, count the set, then rest/done
   sessionState.sideIdx = 0;
+  sessionState.completedSets++;
   updateSideLabel(item);
   updateDots(false);
   sessionState.setIdx < item.sets ? startRest(item) : exDone();
@@ -352,16 +353,21 @@ function nextQueueItem() {
 function finishWorkout() {
   stopTimer();
   haptic([80, 40, 80, 40, 120]);
-  const mins = Math.round((Date.now() - sessionStart) / 60000);
+  const mins      = Math.round((Date.now() - sessionStart) / 60000);
   const totalSets = workout.exercises.reduce((a,e) => a + e.sets, 0);
+  const doneSets  = sessionState.completedSets;
+  const pct       = totalSets > 0 ? Math.round((doneSets / totalSets) * 100) : 100;
+
   document.getElementById('finish-exs').textContent  = workout.exercises.length;
-  document.getElementById('finish-sets').textContent = totalSets;
-  document.getElementById('finish-mins').textContent  = Math.max(1, mins);
-  document.getElementById('finish-sub').textContent   = `${workout.muscle} complete — warm-up to cool-down. Well done.`;
+  document.getElementById('finish-sets').textContent = doneSets;
+  document.getElementById('finish-mins').textContent = Math.max(1, mins);
+  document.getElementById('finish-sub').textContent  = `${workout.muscle} complete — warm-up to cool-down. Well done.`;
+  document.getElementById('finish-completion-fill').style.width  = pct + '%';
+  document.getElementById('finish-completion-label').textContent = `${doneSets} / ${totalSets} sets · ${pct}% complete`;
   document.getElementById('sess-progress-fill').style.width = '100%';
   document.getElementById('sess-progress-label').textContent = 'ALL DONE';
   document.getElementById('finish-overlay').classList.add('show');
-  saveWorkoutHistory({ date: Date.now(), muscle: workout.muscle, duration: Math.max(1, mins), exercises: workout.exercises.length, sets: totalSets });
+  saveWorkoutHistory({ date: Date.now(), muscle: workout.muscle, duration: Math.max(1, mins), exercises: workout.exercises.length, sets: doneSets, totalSets });
 }
 
 document.getElementById('finish-btn').addEventListener('click', () => {

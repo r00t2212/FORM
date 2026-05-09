@@ -1,8 +1,9 @@
-const CACHE = 'form-v1';
+const CACHE = 'form-v2';
 const SHELL = [
   './',
   './index.html',
   './styles.css',
+  './js/icons.js',
   './js/data.js',
   './js/ui.js',
   './js/workout.js',
