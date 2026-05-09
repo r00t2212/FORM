@@ -1,7 +1,7 @@
 {
-  "name": "FORM — Smart Workout",
+  "name": "FORM — Your Mat. Your Move.",
   "short_name": "FORM",
-  "description": "Mat-only workout generator. No equipment, no gym.",
+  "description": "Mat-only workout generator. Pick your goal, time, and intensity — FORM builds your session instantly. No equipment, no gym, no excuses.",
   "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
