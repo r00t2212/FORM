@@ -318,6 +318,91 @@ input[type=range] {
 .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .generate-btn .btn-arrow { font-size: 1.2rem; }
 
+/* ── Feedback FAB ─────────────────────────────── */
+.feedback-fab {
+  position: absolute;
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  right: 16px;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #e8380d;
+  color: #fff;
+  border-radius: 999px;
+  padding: 0 16px 0 12px;
+  min-height: 44px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 4px 20px rgba(232, 56, 13, 0.5), 0 1px 4px rgba(0,0,0,0.4);
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+}
+.feedback-fab svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+.feedback-fab:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 28px rgba(232, 56, 13, 0.65), 0 1px 4px rgba(0,0,0,0.4);
+}
+.feedback-fab:active { transform: scale(0.96); }
+
+/* Tooltip */
+.feedback-fab::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 12px);
+  right: 0;
+  background: #252528;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  line-height: 1.55;
+  padding: 10px 13px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.55);
+  width: 215px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  white-space: normal;
+}
+/* Arrow */
+.feedback-fab::after {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 5px);
+  right: 20px;
+  border: 6px solid transparent;
+  border-top-color: #252528;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.feedback-fab:hover::before,
+.feedback-fab:hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feedback-fab,
+  .feedback-fab::before,
+  .feedback-fab::after { transition: none; }
+}
+
 /* ── LOADING SCREEN ────────────────────────────── */
 #screen-loading {
   align-items: center;
