@@ -26,7 +26,7 @@ Pure vanilla — no frameworks, no build step, no dependencies.
 | Layer | Detail |
 |---|---|
 | HTML / CSS / JS | Single-page app, all screens in one HTML shell |
-| Exercise data | Static library in `js/data.js` — 47 exercises across 5 muscle groups + warmup/cooldown pools |
+| Exercise data | Static library in `js/data.js` — 45 exercises across 5 muscle groups + warmup/cooldown pools |
 | Storage | `localStorage` only (workout history) |
 | PWA | `manifest.json` + cache-first service worker |
 | Icons | Inline SVGs (Lucide-style, `js/icons.js`) |

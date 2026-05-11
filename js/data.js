@@ -87,12 +87,6 @@ const LIBRARY = [
     desc:'Press palms together at chest height and push hard. Hold the contraction. No movement — pure isometric tension through the pecs and triceps.',
     tip:'The harder you press, the more muscle fibers you recruit.', sets:3, work_secs:20, rest_secs:45, label:'HOLD', priority:6 },
 
-  { name:'Isometric Tricep Extension', groups:['arms'],
-    tags:['Triceps'], avoidIf:[], safeFor:['wrist','elbow'],
-    desc:'Press one palm against the back of the other hand. Push the top hand down while resisting with the bottom arm. Alternate sides. Pure tricep contraction without wrist load.',
-    tip:'Keep upper arms still — only the elbow joint works.', sets:3, work_secs:20, rest_secs:40, label:'HOLD', priority:6 },
-
-
   { name:'Push-Up', groups:['chest','full_body'],
     tags:['Chest','Shoulder'], avoidIf:['wrist'], safeFor:[],
     desc:'Hands shoulder-width apart, body straight. Lower chest to just above the floor, elbows at ~45°. Full range of motion — lock out at top.',
@@ -153,11 +147,6 @@ const LIBRARY = [
     tags:['Mid Back','Rear Delt'], avoidIf:[], safeFor:['shoulder impingement'],
     desc:'Lie face down, arms by your sides. Lift arms off the floor and sweep them overhead like a snow angel, then back. Keep chest low.',
     tip:'Squeeze shoulder blades at every point in the arc.', sets:3, work_secs:0, rest_secs:45, label:'12 REPS', priority:7 },
-
-  { name:'Towel Curl', groups:['arms','back'],
-    tags:['Biceps'], avoidIf:['wrist'], safeFor:[],
-    desc:'Hold a filled bag or backpack with a supinated grip. Curl to shoulder height, squeeze at the top, lower slowly in 3 seconds.',
-    tip:'The 3-second negative is where growth happens — don\'t rush it.', sets:3, sides:2, work_secs:0, rest_secs:60, label:'12 REPS', priority:9 },
 
   { name:'Isometric Bicep Hold', groups:['arms'],
     tags:['Biceps'], avoidIf:['wrist'], safeFor:[],

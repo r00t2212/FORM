@@ -341,7 +341,7 @@ input[type=range] {
   cursor: pointer;
   touch-action: manipulation;
   box-shadow: 0 4px 20px rgba(232, 56, 13, 0.5), 0 1px 4px rgba(0,0,0,0.4);
-  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, padding 0.2s ease, gap 0.2s ease;
 }
 .feedback-fab svg {
   width: 1rem;
@@ -353,6 +353,18 @@ input[type=range] {
   box-shadow: 0 6px 28px rgba(232, 56, 13, 0.65), 0 1px 4px rgba(0,0,0,0.4);
 }
 .feedback-fab:active { transform: scale(0.96); }
+
+/* Touch devices: collapsed (icon-only) until tapped */
+@media (hover: none) {
+  .feedback-fab:not(.is-open) {
+    padding: 0 12px;
+    gap: 0;
+  }
+  .feedback-fab:not(.is-open) .fab-label {
+    display: none;
+  }
+}
+.fab-label { white-space: nowrap; }
 
 /* Tooltip */
 .feedback-fab::before {
