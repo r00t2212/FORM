@@ -75,6 +75,7 @@ function loadQueueItem(idx) {
     qtype === 'cooldown' ? `COOL-DOWN ${idx - wu - ex + 1} / ${workout.cooldown.length}` :
                            `EXERCISE ${idx - wu + 1} OF ${ex}`;
   document.getElementById('sess-progress-fill').style.width = (total <= 1 ? 100 : (idx / (total - 1)) * 100) + '%';
+  document.getElementById('ctrl-prev').disabled = (idx === 0);
 
   // Number / phase label
   const numLabel =
@@ -136,6 +137,11 @@ function loadQueueItem(idx) {
 
 document.getElementById('ctrl-main').addEventListener('click', handleMainBtn);
 document.getElementById('ctrl-skip').addEventListener('click', () => { stopTimer(); nextQueueItem(); });
+document.getElementById('ctrl-prev').addEventListener('click', () => {
+  if (sessionState.exIdx === 0) return;
+  stopTimer();
+  loadQueueItem(sessionState.exIdx - 1);
+});
 
 function handleMainBtn() {
   const item  = sessionQueue[sessionState.exIdx];
@@ -370,6 +376,7 @@ function finishWorkout() {
   saveWorkoutHistory({ date: Date.now(), muscle: workout.muscle, duration: Math.max(1, mins), exercises: workout.exercises.length, sets: doneSets, totalSets });
 }
 
+document.getElementById('finish-share-btn').addEventListener('click', shareWorkout);
 document.getElementById('finish-btn').addEventListener('click', () => {
   document.getElementById('finish-overlay').classList.remove('show');
   workout = null; sessionQueue = []; selectedMuscles = [];

@@ -365,8 +365,9 @@ input[type=range] {
 
 /* Collapsed state (JS-applied after 3s) */
 .feedback-fab.is-collapsed {
-  padding: 0 12px;
+  padding: 0 14px;
   gap: 0;
+  justify-content: center;
 }
 .feedback-fab.is-collapsed .fab-label {
   max-width: 0;
@@ -907,6 +908,15 @@ input[type=range] {
   border: 1px solid var(--border);
   color: var(--muted);
 }
+.ctrl-prev {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.ctrl-prev:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
 
 /* Finish screen overlay */
 #finish-overlay {
@@ -961,6 +971,19 @@ input[type=range] {
   text-align: center;
 }
 
+.finish-share-btn {
+  background: transparent;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.15em;
+  padding: 14px 36px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.finish-share-btn:active { transform: scale(0.97); }
 .finish-btn {
   background: var(--accent);
   color: white;

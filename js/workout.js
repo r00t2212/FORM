@@ -183,8 +183,12 @@ function swapExercise(idx) {
   const ex = workout.exercises[idx];
   const usedNames = new Set(workout.exercises.map(e => e.name));
   const injuryKeys = getActiveInjuries();
+  const expandedSelected = selectedMuscles.includes('full_body')
+    ? ['abs_core','chest','back','arms','legs','full_body']
+    : [...selectedMuscles, 'full_body'];
   const candidates = LIBRARY.filter(e =>
     e.groups.some(g => ex.groups.includes(g)) &&
+    e.groups.some(g => expandedSelected.includes(g)) &&
     !usedNames.has(e.name) &&
     !injuryKeys.some(k => e.avoidIf.includes(k))
   );
