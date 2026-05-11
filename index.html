@@ -264,21 +264,27 @@
   var fab = document.querySelector('.feedback-fab');
   if (!fab) return;
   var collapseTimer;
+  var isTouch = window.matchMedia('(pointer: coarse)').matches;
+
+  function collapse() { fab.classList.add('is-collapsed'); }
+  function expand()   { fab.classList.remove('is-collapsed'); }
+
+  // Always start expanded, collapse after 3s
+  collapseTimer = setTimeout(collapse, 3000);
 
   fab.addEventListener('click', function (e) {
-    if (!window.matchMedia('(hover: none)').matches) return;
-    if (!fab.classList.contains('is-open')) {
+    if (fab.classList.contains('is-collapsed') && isTouch) {
       e.preventDefault();
-      fab.classList.add('is-open');
+      expand();
       clearTimeout(collapseTimer);
-      collapseTimer = setTimeout(function () { fab.classList.remove('is-open'); }, 4000);
+      collapseTimer = setTimeout(collapse, 4000);
     }
   });
 
   document.addEventListener('click', function (e) {
     if (!fab.contains(e.target)) {
       clearTimeout(collapseTimer);
-      fab.classList.remove('is-open');
+      collapse();
     }
   });
 }());
