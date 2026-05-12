@@ -24,6 +24,10 @@ durSlider.addEventListener('input', () => {
   sliderFill.style.width = ((v - 15) / 45 * 100) + '%';
 });
 
+sliderFill.style.width = ((durSlider.value - 15) / 45 * 100) + '%';
+durSlider.classList.add('pulse-intro');
+durSlider.addEventListener('animationend', () => durSlider.classList.remove('pulse-intro'), { once: true });
+
 let selectedMuscles = [];
 document.querySelectorAll('.muscle-chip').forEach(chip => {
   chip.addEventListener('click', () => {
