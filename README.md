@@ -84,6 +84,14 @@ FORM/
 
 ---
 
+## Analytics
+
+The live site ([r00t2212.github.io/FORM](https://r00t2212.github.io/FORM)) uses **Google Analytics 4** (`G-HFGWJZ8B6L`) to track anonymous usage events — workout generation, session start/completion, exercise swaps, and shares. No personally identifiable information is collected.
+
+**If you fork or self-host this project**, remove or replace the GA4 snippet in `index.html` (the two `<script>` tags below the `<!-- Google Analytics -->` comment). You can also disable tracking in your browser with any standard content blocker (uBlock Origin, Privacy Badger, etc.).
+
+---
+
 ## Adding Exercise Images
 
 Drop a PNG named exactly after the exercise (e.g. `Glute Bridge.png`) into the `IMAGES/` folder. The app will pick it up automatically. Any exercise without a matching file gracefully hides the image area — nothing breaks.

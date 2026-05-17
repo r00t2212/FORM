@@ -122,7 +122,7 @@ function selectExercises(muscles, duration, injuryKeywords) {
 ══════════════════════════════════════════════════ */
 document.getElementById('generate-btn').addEventListener('click', generateWorkout);
 document.getElementById('plan-regen-btn').addEventListener('click', generateWorkout);
-document.getElementById('plan-share-btn').addEventListener('click', shareWorkout);
+document.getElementById('plan-share-btn').addEventListener('click', () => shareWorkout('plan'));
 
 function generateWorkout() {
   if (!selectedMuscles.length) { showToast('Please select at least one muscle group'); return; }
@@ -173,6 +173,13 @@ function generateWorkout() {
     renderPlan();
     showScreen('screen-plan');
     btn.disabled = false;
+
+    gtag('event', 'workout_generated', {
+      muscle_groups: selectedMuscles.join(','),
+      duration_min: duration,
+      injury_count: injuryKeys.length,
+      exercise_count: exercises.length,
+    });
   }, 300);
 }
 
@@ -181,6 +188,7 @@ function generateWorkout() {
 ══════════════════════════════════════════════════ */
 function swapExercise(idx) {
   const ex = workout.exercises[idx];
+  const outgoingName = ex.name;
   const usedNames = new Set(workout.exercises.map(e => e.name));
   const injuryKeys = getActiveInjuries();
   const expandedSelected = selectedMuscles.includes('full_body')
@@ -202,9 +210,14 @@ function swapExercise(idx) {
   else if (workMinutes >= 40) sets = Math.min(4, sets + 1);
   workout.exercises[idx] = { ...picked, sets };
   renderPlan();
+
+  gtag('event', 'exercise_swapped', {
+    exercise_name: outgoingName,
+    position: idx,
+  });
 }
 
-function shareWorkout() {
+function shareWorkout(from = 'unknown') {
   if (!workout) return;
   const lines = [
     `${workout.title} — ${workout.duration}min · ${workout.muscle}`,
@@ -223,9 +236,10 @@ function shareWorkout() {
   const text = lines.join('\n');
   if (navigator.share) {
     navigator.share({ title: workout.title, text }).catch(() => {});
+    gtag('event', 'workout_shared', { method: 'native_share', from_screen: from });
   } else {
     navigator.clipboard.writeText(text)
-      .then(() => showToast('Workout copied to clipboard'))
+      .then(() => { showToast('Workout copied to clipboard'); gtag('event', 'workout_shared', { method: 'clipboard', from_screen: from }); })
       .catch(() => showToast('Could not copy — try a modern browser'));
   }
 }

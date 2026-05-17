@@ -42,11 +42,24 @@ document.getElementById('start-workout-btn').addEventListener('click', () => {
   sessionStart = Date.now();
   loadQueueItem(0);
   showScreen('screen-session');
+
+  gtag('event', 'session_started', {
+    muscle_groups: workout.muscle,
+    duration_min: workout.duration,
+  });
 });
 
 document.getElementById('session-back-btn').addEventListener('click', () => {
   const inProgress = sessionState.exIdx > 0 || sessionState.setIdx > 0 || sessionState.phase !== 'idle';
   if (inProgress && !confirm('Leave workout? Your progress will be lost.')) return;
+
+  if (inProgress) {
+    gtag('event', 'session_abandoned', {
+      progress_pct: Math.round((sessionState.exIdx / sessionQueue.length) * 100),
+      exercise_idx: sessionState.exIdx,
+    });
+  }
+
   stopTimer();
   sessionState = { exIdx: 0, setIdx: 0, sideIdx: 0, completedSets: 0, phase: 'idle', remaining: 0, ivId: null };
   showScreen('screen-plan');
@@ -136,7 +149,16 @@ function loadQueueItem(idx) {
 }
 
 document.getElementById('ctrl-main').addEventListener('click', handleMainBtn);
-document.getElementById('ctrl-skip').addEventListener('click', () => { stopTimer(); nextQueueItem(); });
+document.getElementById('ctrl-skip').addEventListener('click', () => {
+  const item = sessionQueue[sessionState.exIdx];
+  gtag('event', 'exercise_skipped', {
+    exercise_name: item.name,
+    qtype: item.qtype,
+    position: sessionState.exIdx,
+  });
+  stopTimer();
+  nextQueueItem();
+});
 document.getElementById('ctrl-prev').addEventListener('click', () => {
   if (sessionState.exIdx === 0) return;
   stopTimer();
@@ -374,9 +396,17 @@ function finishWorkout() {
   document.getElementById('sess-progress-label').textContent = 'ALL DONE';
   document.getElementById('finish-overlay').classList.add('show');
   saveWorkoutHistory({ date: Date.now(), muscle: workout.muscle, duration: Math.max(1, mins), exercises: workout.exercises.length, sets: doneSets, totalSets });
+
+  gtag('event', 'workout_completed', {
+    muscle_groups: workout.muscle,
+    completion_pct: pct,
+    sets_done: doneSets,
+    sets_total: totalSets,
+    actual_duration_min: Math.max(1, mins),
+  });
 }
 
-document.getElementById('finish-share-btn').addEventListener('click', shareWorkout);
+document.getElementById('finish-share-btn').addEventListener('click', () => shareWorkout('finish'));
 document.getElementById('finish-btn').addEventListener('click', () => {
   document.getElementById('finish-overlay').classList.remove('show');
   workout = null; sessionQueue = []; selectedMuscles = [];
